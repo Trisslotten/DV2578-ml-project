@@ -32,13 +32,14 @@ void Renderer::init()
 
 void Renderer::render()
 {
-	
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	camera.update(dt.restart());
 
 	shader.use();
 	shader.uniform("viewProj", camera.getTransform());
+	shader.uniform("cameraPos", camera.position);
 	shader.uniform("time", float(timer.elapsed()));
 	glBindVertexArray(quadVAO);
 	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);

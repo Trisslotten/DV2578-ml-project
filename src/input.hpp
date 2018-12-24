@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
 namespace Input
 {
@@ -16,9 +16,9 @@ namespace Input
 	glm::vec2 mouseMovement();
 	glm::vec2 mousePosition();
 
+/*
 	bool isGamepadPresent();
 	float gamepadAxis(int axis);
 	bool gamepadButtonPressed(int button);
+*/
 };
-
-

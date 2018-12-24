@@ -1,9 +1,10 @@
 #include "camera.hpp"
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include "window.hpp"
 #include "input.hpp"
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtx\transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 void Camera::update(float dt)
 {
