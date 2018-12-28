@@ -1,6 +1,6 @@
 #include "renderer.hpp"
 
-
+#include <iostream>
 
 
 void Renderer::init()

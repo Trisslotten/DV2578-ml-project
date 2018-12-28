@@ -2,4 +2,4 @@ CXXFLAGS = `pkg-config --cflags glfw3` `pkg-config --static --libs glfw3` `pkg-c
 
 
 all:
-	$(CXX) src/*.cpp $(CXXFLAGS)
+	$(CXX) src/*.cpp $(CXXFLAGS) -O3
