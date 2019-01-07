@@ -1,9 +1,11 @@
 #include "camera.hpp"
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 #include "window.hpp"
 #include "input.hpp"
-#include <glm\gtc\matrix_transform.hpp>
-#include <glm\gtx\transform.hpp>
+#include <iostream>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/transform.hpp>
 
 void Camera::update(float dt)
 {
@@ -15,9 +17,9 @@ void Camera::update(float dt)
 	float hpi = glm::half_pi<float>() - 0.001f;
 	pitch = glm::clamp(pitch, -hpi, hpi);
 
-	float speed = 10.f;
+	float speed = 3.f;
 	if (Input::isKeyDown(GLFW_KEY_LEFT_SHIFT))
-		speed *= 10.f;
+		speed *= 5.f;
 
 	// for isometric
 	//yaw = glm::pi<float>()/4;
@@ -29,7 +31,7 @@ void Camera::update(float dt)
 	//pitch = 0;
 
 
-	glm::vec3 walk_dir;
+	glm::vec3 walk_dir(0);
 	if (Input::isKeyDown(GLFW_KEY_W))
 		walk_dir += glm::vec3(0, 0, 1);
 	if (Input::isKeyDown(GLFW_KEY_S))
@@ -40,8 +42,13 @@ void Camera::update(float dt)
 		walk_dir += glm::vec3(-1, 0, 0);
 
 	orientation = glm::quat(glm::vec3(0, yaw, 0))*glm::quat(glm::vec3(pitch, 0, 0));
-
+	/*
+	std::cout << walk_dir.x << ", ";
+	std::cout << walk_dir.y << ", ";
+	std::cout << walk_dir.z << "\n";
+	*/
 	walk_dir = orientation * walk_dir;
+
 
 	position += walk_dir * dt * speed;
 	if (Input::isKeyDown(GLFW_KEY_SPACE))
@@ -60,7 +67,7 @@ glm::mat4 Camera::getTransform()
 	auto size = Window::size();
 	float aspect = size.x / size.y;
 
-	glm::mat4 proj = glm::infinitePerspective(glm::radians(fov), aspect, 0.1f);
+	glm::mat4 proj = glm::perspective(glm::radians(fov), aspect, near, far);
 	glm::mat4 view = glm::inverse(glm::translate(position) * glm::mat4_cast(glm::rotate(orientation, glm::pi<float>(), glm::vec3(0, 1, 0))));
 
 	// for isometric

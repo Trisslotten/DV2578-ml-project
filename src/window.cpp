@@ -66,7 +66,7 @@ namespace
 		double update_time = 1.0;
 
 
-		//if (accum_frame_time >= update_time) 
+		//if (accum_frame_time >= update_time)
 		if (frame_timer.elapsed() >= update_time)
 		{
 
@@ -113,15 +113,16 @@ void Window::open(int width, int height)
 		exit(EXIT_FAILURE);
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
 	// MSAA
-	glfwWindowHint(GLFW_SAMPLES, 8);
+	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 	if (!window)
 	{
+		std::cout << "ERROR: Could not create glfw window\n";
 		glfwTerminate();
 		exit(EXIT_FAILURE);
 	}
@@ -139,7 +140,7 @@ void Window::open(int width, int height)
 	glfwSetWindowSizeCallback(window, resizeCallback);
 
 	// vsync 1 off 0
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	int major, minor, rev;
 	glfwGetVersion(&major, &minor, &rev);

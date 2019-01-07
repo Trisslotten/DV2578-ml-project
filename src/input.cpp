@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 #include "window.hpp"
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace
@@ -100,6 +100,7 @@ glm::vec2 Input::mousePosition()
 	return Window::mousePosition();
 }
 
+/*
 bool Input::isGamepadPresent()
 {
 	int present = glfwJoystickPresent(GLFW_JOYSTICK_1);
@@ -141,4 +142,4 @@ bool Input::gamepadButtonPressed(int button)
 	}
 	return 0;
 }
-
+*/

@@ -6,10 +6,17 @@
 #include <glm/glm.hpp>
 
 
+#ifdef _WIN32
+#define SHADER_PATH_MACRO ""
+#endif
+#ifdef __linux__
+#define SHADER_PATH_MACRO "src/"
+#endif
 
 class ShaderProgram
 {
-	const std::string SHADERS_PATH = "";
+
+	const std::string SHADERS_PATH = SHADER_PATH_MACRO;
 
 	std::unordered_map<GLenum, std::string> paths;
 	std::unordered_map<GLenum, GLuint> ids;
