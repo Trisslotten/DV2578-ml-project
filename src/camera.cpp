@@ -30,7 +30,7 @@ void Camera::update(float dt)
 	//yaw = 0;
 	//pitch = 0;
 
-
+	/*
 	glm::vec3 walk_dir(0);
 	if (Input::isKeyDown(GLFW_KEY_W))
 		walk_dir += glm::vec3(0, 0, 1);
@@ -42,19 +42,14 @@ void Camera::update(float dt)
 		walk_dir += glm::vec3(-1, 0, 0);
 
 	orientation = glm::quat(glm::vec3(0, yaw, 0))*glm::quat(glm::vec3(pitch, 0, 0));
-	/*
-	std::cout << walk_dir.x << ", ";
-	std::cout << walk_dir.y << ", ";
-	std::cout << walk_dir.z << "\n";
-	*/
 	walk_dir = orientation * walk_dir;
-
 
 	position += walk_dir * dt * speed;
 	if (Input::isKeyDown(GLFW_KEY_SPACE))
 		position.y += speed * dt;
 	if (Input::isKeyDown(GLFW_KEY_LEFT_CONTROL))
 		position.y -= speed * dt;
+	*/
 }
 
 glm::vec3 Camera::getLookDir()
