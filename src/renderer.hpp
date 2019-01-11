@@ -21,7 +21,7 @@ class Renderer
 	std::vector<float> imgBuffer;
 
 	float numFrames = 0.f;
-	const float numPasses = 100.f;
+	const float numPasses = 300.f;
 	float simTime = 0.f;
 
 

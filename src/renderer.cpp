@@ -112,7 +112,7 @@ void Renderer::render()
 		shader.uniform("numPasses", 1.f);
 		shader.uniform("numFrames", 0.f);
 		shader.uniform("simTime", simTime);
-		shader.uniform("samplesPerPass", 4);
+		shader.uniform("samplesPerPass", 1);
 		glBindVertexArray(quadVAO);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);

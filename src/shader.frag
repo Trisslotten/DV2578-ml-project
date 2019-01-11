@@ -81,7 +81,7 @@ mat3 castRay(Ray ray, out bool isLight)
 			color = vec3(1);
 			if(i == 0)
 			{
-				color = vec3(0.7);
+				color = vec3(1.0);
 				isLight = true;
 			} else {
 				isLight = false;
@@ -132,48 +132,64 @@ mat3 castRay(Ray ray, out bool isLight)
 }
 
 
-/*
-*********************************************************
-*********************************************************
-*/
 const float PI = 3.141592;
 // http://www.amietia.com/lambertnotangent.html
-vec3 cosUnitHemisphere(vec2 seed, vec3 n) {
-    float t = hash12(seed)*(2.0*PI);
-    float u = 2*hash12(seed + 2000.0)-1;
-    return normalize(n + vec3(vec2(cos(t), sin(t)) * sqrt(1.0 - u*u), u));
+vec3 dirInHemisphere(vec2 seed, vec3 n) 
+{
+	vec2 uv;
+    uv.x = 2. * PI * hash12(seed);
+    uv.y = 2. * hash12(seed + 2000.0) - 1.;
+	return normalize(n + vec3(sqrt(1. - uv.y * uv.y) * vec2(cos(uv.x), sin(uv.x)), uv.y));
 }
-/*
-*********************************************************
-*********************************************************
-*/
 
+const int MAX_BOUNCES = 3;
 
-const int MAX_BOUNCES = 4;
-
-vec3 findColor(Ray ray, vec2 seed)
+vec3 findColor(Ray ray, out vec3 normal, out float depth)
 {
 	vec3 color = vec3(0);
-
-	vec3 colorMask = vec3(1);
-	for(int i = 0; i < MAX_BOUNCES+1; i++)
+	normal = vec3(0);
+	vec3 pos = vec3(0);
+	bool isLight = false;
+	mat3 data = castRay(ray, isLight);
+	if(data[1] != vec3(0))
 	{
-		bool isLight = false;
-		mat3 data = castRay(ray, isLight);
-		if(data[1] == vec3(0))
-			break; // no hit
-		// move the origin a little to avoid intersection at same point
-		ray.o = data[0] + data[1]*0.001;
-		colorMask *= data[2];
+		pos = data[0];
+		normal = data[1];
+		vec3 matColor = data[2];
 		if(isLight)
 		{
-			color += colorMask * data[2];
-			break;
+			color = matColor;
+		} else {
+			
+			for(int j = 0; j < samplesPerPass; j++)
+			{
+				vec3 colorMask = matColor;
+				vec3 n = normal;
+				ray.o = pos + 0.001*normal;
+				for(int i = 0; i < MAX_BOUNCES; i++)
+				{
+					vec2 seed = gl_FragCoord.xy + 4000.0*vec2(i,j) + 1000 * time;
+					ray.d = dirInHemisphere(seed, n);
+					isLight = false;
+					data = castRay(ray, isLight);
+					if(data[1] == vec3(0))
+						break;
+					ray.o = data[0] + data[1]*0.001;
+					n = data[1];
+					float cosa = max(dot(-ray.d, n), 0.);
+					if(isLight)
+					{
+						color += cosa * colorMask * data[2];
+						break;
+					}
+					colorMask *= cosa * data[2];
+				}
+			}
+			color /= float(samplesPerPass) * (1.0 / (2.0 * PI));
 		}
-
-		ray.d = cosUnitHemisphere(seed + vec2(2000*i,0), data[1]);
+		depth = length(pos - cameraPos);
+		return color;
 	}
-	return color;
 }
 
 void main()
@@ -185,15 +201,14 @@ void main()
 	ray.o = cameraPos;
 	ray.d = dir;
 
-	for(int i = 0; i < samplesPerPass; i++)
-	{
-		color += findColor(ray, 4000*uv + vec2(50,1000*i+50) + time);
-	}
-	color /= float(samplesPerPass) * (1.0 / (2.0 * PI));
+	vec3 normal;
+	float depth;
+
+	color = findColor(ray, normal, depth);
 
 
 	vec3 prevColor = texture(tex, uv).rgb;
-	
+
 	if(numFrames < numPasses)
 	{
 		color /= numPasses;
@@ -206,6 +221,5 @@ void main()
 	{
 		color = prevColor;
 	}
-
 	outColor = vec4(color, 1.0);
 }

@@ -12,7 +12,7 @@ data_noisy = np.empty(0)
 temp_smooth = np.empty(0)
 temp_noisy = np.empty(0)
 
-input_size = 500
+input_size = 100
 
 for i in range(input_size):
 	print("Loading ", i)
@@ -87,15 +87,15 @@ autoencoder.compile(optimizer='adam', loss='mean_absolute_error')
 
 autoencoder.fit(data_noisy, data_smooth,
                 epochs=100,
-                batch_size=100,
+                batch_size=25,
                 shuffle=True,
                 validation_data=(data_noisy, data_smooth))
 
 smoothed = autoencoder.predict(data_noisy)
 
-offset = 300
+offset = 64
 
-n = 12
+n = 10
 plt.figure()
 for i in range(n):
 	# display original
