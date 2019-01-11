@@ -113,11 +113,11 @@ void Window::open(int width, int height)
 		exit(EXIT_FAILURE);
 
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 
 	// MSAA
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_SAMPLES, 1);
 
 	window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
 	if (!window)
@@ -140,7 +140,7 @@ void Window::open(int width, int height)
 	glfwSetWindowSizeCallback(window, resizeCallback);
 
 	// vsync 1 off 0
-	glfwSwapInterval(0);
+	glfwSwapInterval(1);
 
 	int major, minor, rev;
 	glfwGetVersion(&major, &minor, &rev);

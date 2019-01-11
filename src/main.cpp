@@ -4,7 +4,7 @@
 
 int main()
 {
-	Window::open();
+	Window::open(WINDOW_SIZE_X, WINDOW_SIZE_Y);
 
 	Renderer renderer;
 	renderer.init();

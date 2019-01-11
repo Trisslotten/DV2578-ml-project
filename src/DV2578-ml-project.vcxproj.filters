@@ -16,6 +16,9 @@
     <Filter Include="Source Files\shaders">
       <UniqueIdentifier>{98e0017c-6e01-4d5e-a80e-735887687958}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\training">
+      <UniqueIdentifier>{04ca999b-7ed3-4616-8bb3-b89ff02d339e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,6 +37,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="computeshader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -56,6 +65,12 @@
     <ClInclude Include="input.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="computeshader.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.vert">
@@ -63,6 +78,15 @@
     </None>
     <None Include="shader.frag">
       <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="drawtexture.vert">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="drawtexture.frag">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="training.py">
+      <Filter>Source Files\training</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -9,6 +9,8 @@
 
 void Camera::update(float dt)
 {
+
+	/*
 	// DEBUG FPS CAMERA
 	auto dm = Input::mouseMovement();
 	pitch += dm.y * 0.005f;
@@ -30,7 +32,6 @@ void Camera::update(float dt)
 	//yaw = 0;
 	//pitch = 0;
 
-	/*
 	glm::vec3 walk_dir(0);
 	if (Input::isKeyDown(GLFW_KEY_W))
 		walk_dir += glm::vec3(0, 0, 1);

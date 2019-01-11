@@ -1,4 +1,4 @@
-#version 330 core
+#version 440 core
 
 out vec4 outColor;
 
@@ -6,26 +6,19 @@ in vec3 vpos;
 in vec3 vdir;
 in vec2 uv;
 
+
+uniform sampler2D tex;
 uniform float time;
+uniform float simTime;
 uniform vec3 cameraPos;
+uniform float numPasses;
+uniform float numFrames;
+uniform int samplesPerPass;
 
 struct Ray
 {
 	vec3 o, d;
 };
-
-struct Material
-{
-	vec3 color;
-};
-
-struct SphereData
-{
-	vec3 pos;
-	float radius;
-	int materialID;
-};
-
 
 bool sphere(Ray r, vec3 p, float radius, out float t, out vec3 n)
 {
@@ -65,17 +58,6 @@ vec3 dither()
 	return res;
 }
 
-float noise(vec3 p);
-vec3 noiseColor(vec3 p)
-{
-	vec3 col = vec3(0);
-	col += 0.5*noise(p);
-	col += 0.25*noise(2*p);
-	col += 0.125*noise(4*p);
-	return col;
-}
-
-
 mat3 castRay(Ray ray, out bool isLight)
 {
 	isLight = false;
@@ -85,11 +67,11 @@ mat3 castRay(Ray ray, out bool isLight)
 	for(int i = 0; i < 5; i++)
 	{
 		vec3 pos = vec3(0);
-		pos.x = 3*sin(time*0.7 + 10*i);
-		pos.y = 3*sin(time*0.5 - 5*i);
-		pos.z = 3*sin(time*0.35 + 5*i);
+		float usedTime = simTime;
+		pos.x = 3*sin(usedTime *0.7 + 10*i);
+		pos.y = 3*sin(usedTime *0.5 - 5*i);
+		pos.z = 3*sin(usedTime *0.35 + 5*i);
 		float radius = 1;
-		
 		float nt = 0.;
 		vec3 nn = vec3(0);
 		if(sphere(ray, pos, radius, nt, nn) && (nt < t || t < 0))
@@ -99,6 +81,7 @@ mat3 castRay(Ray ray, out bool isLight)
 			color = vec3(1);
 			if(i == 0)
 			{
+				color = vec3(0.7);
 				isLight = true;
 			} else {
 				isLight = false;
@@ -154,13 +137,10 @@ mat3 castRay(Ray ray, out bool isLight)
 *********************************************************
 */
 const float PI = 3.141592;
-//From http://www.amietia.com/lambertnotangent.html
+// http://www.amietia.com/lambertnotangent.html
 vec3 cosUnitHemisphere(vec2 seed, vec3 n) {
     float t = hash12(seed)*(2.0*PI);
     float u = 2*hash12(seed + 2000.0)-1;
-    
-    // If the spherical point chosen is very close to -n we end up with a null vector.
-    // The probablility of this happening is insignificant[?].
     return normalize(n + vec3(vec2(cos(t), sin(t)) * sqrt(1.0 - u*u), u));
 }
 /*
@@ -169,9 +149,7 @@ vec3 cosUnitHemisphere(vec2 seed, vec3 n) {
 */
 
 
-const int MAX_BOUNCES = 2;
-const int SAMPLES = 256;
-const vec3 LIGHT = vec3(0.5);
+const int MAX_BOUNCES = 4;
 
 vec3 findColor(Ray ray, vec2 seed)
 {
@@ -185,11 +163,11 @@ vec3 findColor(Ray ray, vec2 seed)
 		if(data[1] == vec3(0))
 			break; // no hit
 		// move the origin a little to avoid intersection at same point
-		ray.o = data[0] + data[1]*0.01;
+		ray.o = data[0] + data[1]*0.001;
 		colorMask *= data[2];
 		if(isLight)
 		{
-			color += colorMask * LIGHT;
+			color += colorMask * data[2];
 			break;
 		}
 
@@ -207,39 +185,27 @@ void main()
 	ray.o = cameraPos;
 	ray.d = dir;
 
-	for(int i = 0; i < SAMPLES; i++)
+	for(int i = 0; i < samplesPerPass; i++)
 	{
-		color += findColor(ray, 2000*uv + vec2(50,1000*i+50) + time);
+		color += findColor(ray, 4000*uv + vec2(50,1000*i+50) + time);
 	}
-	color /= float(SAMPLES) * (1.0 / (2.0 * PI));
+	color /= float(samplesPerPass) * (1.0 / (2.0 * PI));
 
-	color += dither();
+
+	vec3 prevColor = texture(tex, uv).rgb;
+	
+	if(numFrames < numPasses)
+	{
+		color /= numPasses;
+		if(numPasses != 1.)
+		{
+			color += prevColor;
+		}
+	}
+	else 
+	{
+		color = prevColor;
+	}
+
 	outColor = vec4(color, 1.0);
-
-}
-
-// https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
-float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-vec4 mod289(vec4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-vec4 perm(vec4 x){return mod289(((x * 34.0) + 1.0) * x);}
-float noise(vec3 p){
-    vec3 a = floor(p);
-    vec3 d = p - a;
-    d = d * d * (3.0 - 2.0 * d);
-
-    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
-    vec4 k1 = perm(b.xyxy);
-    vec4 k2 = perm(k1.xyxy + b.zzww);
-
-    vec4 c = k2 + a.zzzz;
-    vec4 k3 = perm(c);
-    vec4 k4 = perm(c + 1.0);
-
-    vec4 o1 = fract(k3 * (1.0 / 41.0));
-    vec4 o2 = fract(k4 * (1.0 / 41.0));
-
-    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
-    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
-
-    return o4.y * d.y + o4.x * (1.0 - d.y);
 }
