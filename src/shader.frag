@@ -1,6 +1,7 @@
 #version 440 core
 
-out vec4 outColor;
+layout(location = 0) out vec4 outColor;
+layout(location = 1) out vec4 outNormalDepth; 
 
 in vec3 vpos;
 in vec3 vdir;
@@ -10,6 +11,7 @@ in vec2 uv;
 uniform sampler2D tex;
 uniform float time;
 uniform float simTime;
+uniform mat4 viewProj;
 uniform vec3 cameraPos;
 uniform float numPasses;
 uniform float numFrames;
@@ -221,5 +223,10 @@ void main()
 	{
 		color = prevColor;
 	}
+
+	normal = normalize((viewProj * vec4(normal, 0)).xyz);
+
+
 	outColor = vec4(color, 1.0);
+	outNormalDepth = vec4(normal.xy, depth, 1.0);
 }

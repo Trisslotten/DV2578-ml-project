@@ -5,23 +5,26 @@
 #include "shader.hpp"
 #include "camera.hpp"
 
-const int WINDOW_SIZE_X = 1024;
-const int WINDOW_SIZE_Y = 1024;
+const int WINDOW_SIZE_X = 128 * 6;
+const int WINDOW_SIZE_Y = 128 * 6;
 
 class Renderer
 {
 	GLuint quadVAO;
 	GLuint quadVBO;
 
+	GLuint normalDepthTextures[2];
 	GLuint accumTextures[2];
 	GLuint accumFramebuffers[2];
 	int bufferIndex = 0;
 
 	
 	std::vector<float> imgBuffer;
+	std::vector<float> ndBuffer;
+	std::vector<float> dataBuffer;
 
 	float numFrames = 0.f;
-	const float numPasses = 300.f;
+	const float numPasses = 64.f;
 	float simTime = 0.f;
 
 
