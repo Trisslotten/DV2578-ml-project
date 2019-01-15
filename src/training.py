@@ -9,17 +9,28 @@ import random
 import time
 import tensorflow as tf
 
+# used for gpu backend, remove if compability problem occurs
 from keras.backend.tensorflow_backend import set_session
 config = tf.ConfigProto()
 config.gpu_options.per_process_gpu_memory_fraction = 0.7
 set_session(tf.Session(config=config))
 
 
-input_size = 36*200
-offset = 36
+
+# number of chunks to load, 36 make a whole image
+input_size = 36#*200
+
+# offset into the data, usefull for skipping the first image for later testing
+offset = 0
+
+# if an existing network should be loaded or a new one should be created
 load = True
-training = True
+# filename of existing network
 filename = "model.h5"
+
+# if we are training or not
+# False means the first image in the loaded data is plotted
+training = False
 
 
 def new_autoencoder():
@@ -133,7 +144,7 @@ if training:
 	validation_output = data_smooth[train_index:input_size]
 	while True:
 		autoencoder.fit(training_input, training_output, 
-						epochs=50, 
+						epochs=20, 
 						batch_size=100, 
 						shuffle=True, 
 						validation_data=(validation_input, validation_output))
@@ -166,7 +177,7 @@ else:
 			ax.get_yaxis().set_visible(False)
 			ax.axis('off')
 
-	plt.figure("Wanted - high sample per pixel")
+	plt.figure("Reference - high sample per pixel")
 	plt.subplots_adjust(wspace=0, hspace=0)
 	for i in range(n):
 		for j in range(n):

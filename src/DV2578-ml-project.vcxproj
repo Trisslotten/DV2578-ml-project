@@ -126,7 +126,6 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="computeshader.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="shader.cpp" />
@@ -136,7 +135,6 @@
     <ClInclude Include="camera.hpp" />
     <ClInclude Include="computeshader.hpp" />
     <ClInclude Include="input.hpp" />
-    <ClInclude Include="lodepng.h" />
     <ClInclude Include="renderer.hpp" />
     <ClInclude Include="shader.hpp" />
     <ClInclude Include="timer.hpp" />

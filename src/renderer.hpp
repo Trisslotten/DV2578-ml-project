@@ -28,8 +28,8 @@ class Renderer
 	float simTime = 0.f;
 
 	glm::vec3 modulation = glm::vec3(1);
-	const int numSame = 8;
-	int sameCounter = 8;
+	const int numSame = 2;
+	int sameCounter = 2;
 
 	int smoothGUID = 0;
 	int noisyGUID = 0;

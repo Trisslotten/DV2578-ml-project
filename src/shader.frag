@@ -53,14 +53,6 @@ float uhash12(uvec2 x)
 	return float(n) * (1.0 / float(0xffffffffU));
 }
 float hash12(vec2 x) { return uhash12(uvec2(50.*x)); }
-vec3 dither()
-{
-	vec3 res = vec3(0);
-	res.r += mix(-0.5/255.0, 0.5/255.0, hash12(gl_FragCoord.xy));
-	res.g += mix(-0.5/255.0, 0.5/255.0, hash12(gl_FragCoord.xy + 1000));
-	res.b += mix(-0.5/255.0, 0.5/255.0, hash12(gl_FragCoord.xy + 2000));
-	return res;
-}
 
 vec3 spherePos(int seed)
 {
