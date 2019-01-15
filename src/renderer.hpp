@@ -24,9 +24,12 @@ class Renderer
 	std::vector<float> dataBuffer;
 
 	float numFrames = 0.f;
-	const float numPasses = 64.f;
+	const float numPasses = 128.f;
 	float simTime = 0.f;
 
+	glm::vec3 modulation = glm::vec3(1);
+	const int numSame = 8;
+	int sameCounter = 8;
 
 	int smoothGUID = 0;
 	int noisyGUID = 0;

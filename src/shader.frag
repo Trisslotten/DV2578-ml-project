@@ -16,6 +16,7 @@ uniform vec3 cameraPos;
 uniform float numPasses;
 uniform float numFrames;
 uniform int samplesPerPass;
+uniform vec3 modulation;
 
 struct Ray
 {
@@ -44,6 +45,7 @@ bool plane(Ray r, vec3 p, vec3 n, out float t)
 }
 
 // iq hash
+// https://www.shadertoy.com/view/4tXyWN
 float uhash12(uvec2 x)
 {
 	uvec2 q = 1103515245U * ((x >> 1U) ^ (uvec2(x.y, x.x)));
@@ -60,6 +62,16 @@ vec3 dither()
 	return res;
 }
 
+vec3 spherePos(int seed)
+{
+	float i = float(seed);
+	vec3 pos = vec3(0);
+	pos.x = 3.*sin(simTime * 0.7 + 10.*i);
+	pos.y = 3.*sin(simTime * 0.5 - 5.*i);
+	pos.z = 3.*sin(simTime * 0.35 + 5.*i);
+	return pos;
+}
+
 mat3 castRay(Ray ray, out bool isLight)
 {
 	isLight = false;
@@ -68,11 +80,8 @@ mat3 castRay(Ray ray, out bool isLight)
 	vec3 color = vec3(0);
 	for(int i = 0; i < 5; i++)
 	{
-		vec3 pos = vec3(0);
-		float usedTime = simTime;
-		pos.x = 3*sin(usedTime *0.7 + 10*i);
-		pos.y = 3*sin(usedTime *0.5 - 5*i);
-		pos.z = 3*sin(usedTime *0.35 + 5*i);
+		vec3 pos = spherePos(i);
+		
 		float radius = 1;
 		float nt = 0.;
 		vec3 nn = vec3(0);
@@ -144,7 +153,7 @@ vec3 dirInHemisphere(vec2 seed, vec3 n)
 	return normalize(n + vec3(sqrt(1. - uv.y * uv.y) * vec2(cos(uv.x), sin(uv.x)), uv.y));
 }
 
-const int MAX_BOUNCES = 3;
+const int MAX_BOUNCES = 2;
 
 vec3 findColor(Ray ray, out vec3 normal, out float depth)
 {
@@ -208,15 +217,18 @@ void main()
 
 	color = findColor(ray, normal, depth);
 
+	//color = pow(color, vec3(0.2));
+
+	color *= modulation;
 
 	vec3 prevColor = texture(tex, uv).rgb;
 
 	if(numFrames < numPasses)
 	{
-		color /= numPasses;
+		color /= numFrames+1.;
 		if(numPasses != 1.)
 		{
-			color += prevColor;
+			color += numFrames * prevColor / (numFrames+1.);
 		}
 	}
 	else 

@@ -97,6 +97,7 @@ void Renderer::render()
 		shader.uniform("numFrames", numFrames);
 		shader.uniform("simTime", simTime);
 		shader.uniform("samplesPerPass", 128);
+		shader.uniform("modulation", modulation);
 		glBindVertexArray(quadVAO);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
@@ -130,7 +131,8 @@ void Renderer::render()
 		shader.uniform("numPasses", 1.f);
 		shader.uniform("numFrames", 0.f);
 		shader.uniform("simTime", simTime);
-		shader.uniform("samplesPerPass", 4);
+		shader.uniform("samplesPerPass", 16);
+		shader.uniform("modulation", modulation);
 		glBindVertexArray(quadVAO);
 		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
 		glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
@@ -164,9 +166,18 @@ void Renderer::render()
 		glBindFramebuffer(GL_FRAMEBUFFER, accumFramebuffers[next]);
 		glClear(GL_COLOR_BUFFER_BIT);
 		numFrames = 0.f;
-		simTime = 100.f*rand() / float(RAND_MAX);
-		camera.position.x = 6.f*rand() / float(RAND_MAX) - 3.f;
-		camera.position.y = 6.f*rand() / float(RAND_MAX) - 3.f;
+		//modulation.r = 2.f * rand() / float(RAND_MAX);
+		//modulation.g = 2.f * rand() / float(RAND_MAX);
+		//modulation.b = 2.f * rand() / float(RAND_MAX);
+
+		sameCounter++;
+		if (sameCounter >= numSame)
+		{
+			simTime = 100.f*rand() / float(RAND_MAX);
+			camera.position.x = 6.f*rand() / float(RAND_MAX) - 3.f;
+			camera.position.y = 6.f*rand() / float(RAND_MAX) - 3.f;
+			sameCounter = 0;
+		}
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

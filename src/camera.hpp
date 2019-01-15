@@ -6,7 +6,7 @@
 
 struct Camera
 {
-	glm::vec3 position = glm::vec3(0, 0, -6);
+	glm::vec3 position = glm::vec3(0, 0, -7);
 	glm::quat orientation = glm::quat();
 
 	float fov = 75.f;
